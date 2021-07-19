@@ -1,0 +1,18 @@
+Our tour team needs a report created that show how many boxes of peaches and how many bags of pecans we have sold on each of our tours. Here is some context you’ll need:
+
+- We are running three tours this year – South, Midwest and North East
+- Each tour is made up of two routes
+- Each route is comprised of stops which take place at locations
+- We sell three products on tour:
+	- Single Tour Box (peaches)
+	- Single bag of pecans
+	- The Special (two bags of pecans, and two boxes of peaches)
+
+The operations team needs to know:
+- How many boxes of peaches and bags of pecans to order from the farm for each day of the tour
+- How many boxes and bags need to go to each tour (South, Midwest, and North East)
+- How many boxes and bags need to go to each location
+
+Can you create a report that shows the above information for all Tours in 2021 and make it easy for the operations team to find the information they are looking for?
+
+Let me know if you have any questions.

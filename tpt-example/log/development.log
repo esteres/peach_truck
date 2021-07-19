@@ -1,0 +1,859 @@
+Started GET "/" for ::1 at 2021-07-12 13:12:45 -0500
+  [1m[35m (1.0ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+Processing by Rails::WelcomeController#index as HTML
+  Rendering /Users/ashharris/.rbenv/versions/2.7.2/lib/ruby/gems/2.7.0/gems/railties-6.1.4/lib/rails/templates/rails/welcome/index.html.erb
+  Rendered /Users/ashharris/.rbenv/versions/2.7.2/lib/ruby/gems/2.7.0/gems/railties-6.1.4/lib/rails/templates/rails/welcome/index.html.erb (Duration: 3.9ms | Allocations: 445)
+Completed 200 OK in 12ms (Views: 6.1ms | ActiveRecord: 0.0ms | Allocations: 3600)
+
+
+  [1m[35m (111.2ms)[0m  [1m[35mCREATE DATABASE "example_db" ENCODING = 'unicode'[0m
+  [1m[35mSQL (61.2ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pg_stat_statements"[0m
+  [1m[35mSQL (23.3ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pgcrypto"[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35mSQL (7.6ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "tablefunc"[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "categories" CASCADE[0m
+  [1m[35m (9.1ms)[0m  [1m[35mCREATE TABLE "categories" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "locations" CASCADE[0m
+  [1m[35m (2.1ms)[0m  [1m[35mCREATE TABLE "locations" ("id" bigserial primary key, "campaign_id" integer, "name" character varying, "notes" text, "place_id" bigint, "address" character varying, "lat" decimal, "lng" decimal, "position" integer, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "market_id" integer, "available_here" text, "market_position" integer, "formatted_addresses" character varying[], "addresses" character varying[], "is_drive_thru" boolean, "static_map" character varying)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_locations_on_addresses" ON "locations" ("addresses")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_locations_on_formatted_addresses" ON "locations" ("formatted_addresses")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "markets" CASCADE[0m
+  [1m[35m (2.4ms)[0m  [1m[35mCREATE TABLE "markets" ("id" bigserial primary key, "name" character varying, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "position" integer)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "order_line_items" CASCADE[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE TABLE "order_line_items" ("id" bigserial primary key, "order_id" integer, "product_id" bigint, "title" character varying, "quantity" integer, "price" decimal, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.9ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id_and_product_id" ON "order_line_items" ("order_id", "product_id")[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id" ON "order_line_items" ("order_id")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_product_id" ON "order_line_items" ("product_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "orders" CASCADE[0m
+  [1m[35m (1.4ms)[0m  [1m[35mCREATE TABLE "orders" ("id" bigserial primary key, "order_id" bigint, "order_number" integer, "customer_id" bigint, "stop_id" integer, "sh_created_at" timestamp, "sh_updated_at" timestamp, "total" decimal, "fulfillment_status" character varying, "scanned_date" timestamp, "cancelled_at" timestamp, "financial_status" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "location_id" integer, "sh_location_id" integer, "sh_stop_id" integer, "sh_location" character varying, "sh_address" character varying, "sh_coordinates" character varying, "sh_date_time" character varying, "order_type" character varying, "user_id" integer, "sh_fulfill" boolean DEFAULT FALSE, "is_mismatched" boolean DEFAULT FALSE, "canceled_order_id" integer, "migrated_order_id" integer, "scanned_coordinates" text, "scanned_from_location_id" integer, "template_version" character varying)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_orders_on_location_id" ON "orders" ("location_id")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_orders_on_order_id" ON "orders" ("order_id")[0m
+  [1m[35m (0.9ms)[0m  [1m[35mCREATE INDEX "index_orders_on_order_number" ON "orders" ("order_number")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_orders_on_stop_id" ON "orders" ("stop_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "products" CASCADE[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE TABLE "products" ("id" bigserial primary key, "product_id" bigint, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "qty" integer, "product_type" integer DEFAULT 0, "variant_id" bigint, "image_url" character varying, "price" decimal, "title" character varying)[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "region_tours" CASCADE[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE TABLE "region_tours" ("id" bigserial primary key, "tour_id" integer, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "regions" CASCADE[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE TABLE "regions" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_date_stops" CASCADE[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE TABLE "route_date_stops" ("id" bigserial primary key, "route_date_id" integer, "stop_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_dates" CASCADE[0m
+  [1m[35m (2.6ms)[0m  [1m[35mCREATE TABLE "route_dates" ("id" bigserial primary key, "route_id" integer, "date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "status" integer, "stop_id" bigint)[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "routes" CASCADE[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE TABLE "routes" ("id" bigserial primary key, "name" character varying, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "color_name" character varying, "color" character varying, "tour_id" bigint)[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "stops" CASCADE[0m
+  [1m[35m (1.8ms)[0m  [1m[35mCREATE TABLE "stops" ("id" bigserial primary key, "location_id" integer, "date" date, "timezone" character varying, "loc_id" character varying, "hurry_up_before" character varying, "sold_out_before" character varying, "max_boxes" integer, "sold_boxes" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "date_type" character varying, "repeat_until" date, "start_time" time, "end_time" time, "klaviyo_remider_1_id" character varying, "klaviyo_remider_2_id" character varying, "klaviyo_remider_3_id" character varying, "contact_name" character varying, "contact_phone" character varying, "contact_email" character varying, "notes" text, "status" integer DEFAULT 1, "target_boxes" integer)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_stops_on_date" ON "stops" ("date")[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "tours" CASCADE[0m
+  [1m[35m (1.7ms)[0m  [1m[35mCREATE TABLE "tours" ("id" bigserial primary key, "name" character varying, "friendly_name" character varying, "season" character varying, "start_date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.7ms)[0m  [1m[35mDROP TABLE IF EXISTS "versions" CASCADE[0m
+  [1m[35m (1.4ms)[0m  [1m[35mCREATE TABLE "versions" ("id" bigserial primary key, "item_type" character varying NOT NULL, "item_id" bigint NOT NULL, "event" character varying NOT NULL, "whodunnit" character varying, "object" text, "created_at" timestamp, "object_changes" text)[0m
+  [1m[35m (0.7ms)[0m  [1m[35mCREATE INDEX "index_versions_on_item_type_and_item_id" ON "versions" ("item_type", "item_id")[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.6ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20210701053215)[0m
+  [1m[35m (1.0ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.9ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2021-07-12 18:30:43.891591"], ["updated_at", "2021-07-12 18:30:43.891591"]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::InternalMetadata Load (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.2ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "schema_sha1"], ["value", "b1fce4da12556eeb995c06fd77db36655d5860b5"], ["created_at", "2021-07-12 18:30:43.895619"], ["updated_at", "2021-07-12 18:30:43.895619"]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (0.6ms)[0m  [1m[35mCREATE DATABASE "example_db" ENCODING = 'unicode'[0m
+  [1m[35m (93.3ms)[0m  [1m[35mCREATE DATABASE "example_db_test" ENCODING = 'unicode'[0m
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35mSQL (0.2ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pg_stat_statements"[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pgcrypto"[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "tablefunc"[0m
+  [1m[35m (1.8ms)[0m  [1m[35mDROP TABLE IF EXISTS "categories" CASCADE[0m
+  [1m[35m (1.9ms)[0m  [1m[35mCREATE TABLE "categories" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (1.0ms)[0m  [1m[35mDROP TABLE IF EXISTS "locations" CASCADE[0m
+  [1m[35m (1.9ms)[0m  [1m[35mCREATE TABLE "locations" ("id" bigserial primary key, "campaign_id" integer, "name" character varying, "notes" text, "place_id" bigint, "address" character varying, "lat" decimal, "lng" decimal, "position" integer, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "market_id" integer, "available_here" text, "market_position" integer, "formatted_addresses" character varying[], "addresses" character varying[], "is_drive_thru" boolean, "static_map" character varying)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_locations_on_addresses" ON "locations" ("addresses")[0m
+  [1m[35m (0.7ms)[0m  [1m[35mCREATE INDEX "index_locations_on_formatted_addresses" ON "locations" ("formatted_addresses")[0m
+  [1m[35m (0.9ms)[0m  [1m[35mDROP TABLE IF EXISTS "markets" CASCADE[0m
+  [1m[35m (1.4ms)[0m  [1m[35mCREATE TABLE "markets" ("id" bigserial primary key, "name" character varying, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "position" integer)[0m
+  [1m[35m (1.0ms)[0m  [1m[35mDROP TABLE IF EXISTS "order_line_items" CASCADE[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE TABLE "order_line_items" ("id" bigserial primary key, "order_id" integer, "product_id" bigint, "title" character varying, "quantity" integer, "price" decimal, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id_and_product_id" ON "order_line_items" ("order_id", "product_id")[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id" ON "order_line_items" ("order_id")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_product_id" ON "order_line_items" ("product_id")[0m
+  [1m[35m (1.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "orders" CASCADE[0m
+  [1m[35m (1.9ms)[0m  [1m[35mCREATE TABLE "orders" ("id" bigserial primary key, "order_id" bigint, "order_number" integer, "customer_id" bigint, "stop_id" integer, "sh_created_at" timestamp, "sh_updated_at" timestamp, "total" decimal, "fulfillment_status" character varying, "scanned_date" timestamp, "cancelled_at" timestamp, "financial_status" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "location_id" integer, "sh_location_id" integer, "sh_stop_id" integer, "sh_location" character varying, "sh_address" character varying, "sh_coordinates" character varying, "sh_date_time" character varying, "order_type" character varying, "user_id" integer, "sh_fulfill" boolean DEFAULT FALSE, "is_mismatched" boolean DEFAULT FALSE, "canceled_order_id" integer, "migrated_order_id" integer, "scanned_coordinates" text, "scanned_from_location_id" integer, "template_version" character varying)[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_orders_on_location_id" ON "orders" ("location_id")[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_orders_on_order_id" ON "orders" ("order_id")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_orders_on_order_number" ON "orders" ("order_number")[0m
+  [1m[35m (0.6ms)[0m  [1m[35mCREATE INDEX "index_orders_on_stop_id" ON "orders" ("stop_id")[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "products" CASCADE[0m
+  [1m[35m (1.8ms)[0m  [1m[35mCREATE TABLE "products" ("id" bigserial primary key, "product_id" bigint, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "qty" integer, "product_type" integer DEFAULT 0, "variant_id" bigint, "image_url" character varying, "price" decimal, "title" character varying)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "region_tours" CASCADE[0m
+  [1m[35m (1.0ms)[0m  [1m[35mCREATE TABLE "region_tours" ("id" bigserial primary key, "tour_id" integer, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "regions" CASCADE[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE TABLE "regions" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.9ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_date_stops" CASCADE[0m
+  [1m[35m (0.7ms)[0m  [1m[35mCREATE TABLE "route_date_stops" ("id" bigserial primary key, "route_date_id" integer, "stop_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (1.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_dates" CASCADE[0m
+  [1m[35m (1.7ms)[0m  [1m[35mCREATE TABLE "route_dates" ("id" bigserial primary key, "route_id" integer, "date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "status" integer, "stop_id" bigint)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "routes" CASCADE[0m
+  [1m[35m (1.4ms)[0m  [1m[35mCREATE TABLE "routes" ("id" bigserial primary key, "name" character varying, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "color_name" character varying, "color" character varying, "tour_id" bigint)[0m
+  [1m[35m (1.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "stops" CASCADE[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE TABLE "stops" ("id" bigserial primary key, "location_id" integer, "date" date, "timezone" character varying, "loc_id" character varying, "hurry_up_before" character varying, "sold_out_before" character varying, "max_boxes" integer, "sold_boxes" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "date_type" character varying, "repeat_until" date, "start_time" time, "end_time" time, "klaviyo_remider_1_id" character varying, "klaviyo_remider_2_id" character varying, "klaviyo_remider_3_id" character varying, "contact_name" character varying, "contact_phone" character varying, "contact_email" character varying, "notes" text, "status" integer DEFAULT 1, "target_boxes" integer)[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_stops_on_date" ON "stops" ("date")[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "tours" CASCADE[0m
+  [1m[35m (1.4ms)[0m  [1m[35mCREATE TABLE "tours" ("id" bigserial primary key, "name" character varying, "friendly_name" character varying, "season" character varying, "start_date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.7ms)[0m  [1m[35mDROP TABLE IF EXISTS "versions" CASCADE[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE TABLE "versions" ("id" bigserial primary key, "item_type" character varying NOT NULL, "item_id" bigint NOT NULL, "event" character varying NOT NULL, "whodunnit" character varying, "object" text, "created_at" timestamp, "object_changes" text)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE INDEX "index_versions_on_item_type_and_item_id" ON "versions" ("item_type", "item_id")[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[35mSQL (13.1ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pg_stat_statements"[0m
+  [1m[35mSQL (4.0ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pgcrypto"[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35mSQL (2.4ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "tablefunc"[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "categories" CASCADE[0m
+  [1m[35m (7.1ms)[0m  [1m[35mCREATE TABLE "categories" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "locations" CASCADE[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE TABLE "locations" ("id" bigserial primary key, "campaign_id" integer, "name" character varying, "notes" text, "place_id" bigint, "address" character varying, "lat" decimal, "lng" decimal, "position" integer, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "market_id" integer, "available_here" text, "market_position" integer, "formatted_addresses" character varying[], "addresses" character varying[], "is_drive_thru" boolean, "static_map" character varying)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_locations_on_addresses" ON "locations" ("addresses")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_locations_on_formatted_addresses" ON "locations" ("formatted_addresses")[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "markets" CASCADE[0m
+  [1m[35m (1.8ms)[0m  [1m[35mCREATE TABLE "markets" ("id" bigserial primary key, "name" character varying, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "position" integer)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "order_line_items" CASCADE[0m
+  [1m[35m (0.9ms)[0m  [1m[35mCREATE TABLE "order_line_items" ("id" bigserial primary key, "order_id" integer, "product_id" bigint, "title" character varying, "quantity" integer, "price" decimal, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.9ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id_and_product_id" ON "order_line_items" ("order_id", "product_id")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id" ON "order_line_items" ("order_id")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_product_id" ON "order_line_items" ("product_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "orders" CASCADE[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE TABLE "orders" ("id" bigserial primary key, "order_id" bigint, "order_number" integer, "customer_id" bigint, "stop_id" integer, "sh_created_at" timestamp, "sh_updated_at" timestamp, "total" decimal, "fulfillment_status" character varying, "scanned_date" timestamp, "cancelled_at" timestamp, "financial_status" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "location_id" integer, "sh_location_id" integer, "sh_stop_id" integer, "sh_location" character varying, "sh_address" character varying, "sh_coordinates" character varying, "sh_date_time" character varying, "order_type" character varying, "user_id" integer, "sh_fulfill" boolean DEFAULT FALSE, "is_mismatched" boolean DEFAULT FALSE, "canceled_order_id" integer, "migrated_order_id" integer, "scanned_coordinates" text, "scanned_from_location_id" integer, "template_version" character varying)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mCREATE INDEX "index_orders_on_location_id" ON "orders" ("location_id")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_orders_on_order_id" ON "orders" ("order_id")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_orders_on_order_number" ON "orders" ("order_number")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_orders_on_stop_id" ON "orders" ("stop_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "products" CASCADE[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE TABLE "products" ("id" bigserial primary key, "product_id" bigint, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "qty" integer, "product_type" integer DEFAULT 0, "variant_id" bigint, "image_url" character varying, "price" decimal, "title" character varying)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "region_tours" CASCADE[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE TABLE "region_tours" ("id" bigserial primary key, "tour_id" integer, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "regions" CASCADE[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE TABLE "regions" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_date_stops" CASCADE[0m
+  [1m[35m (0.6ms)[0m  [1m[35mCREATE TABLE "route_date_stops" ("id" bigserial primary key, "route_date_id" integer, "stop_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_dates" CASCADE[0m
+  [1m[35m (1.1ms)[0m  [1m[35mCREATE TABLE "route_dates" ("id" bigserial primary key, "route_id" integer, "date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "status" integer, "stop_id" bigint)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "routes" CASCADE[0m
+  [1m[35m (0.9ms)[0m  [1m[35mCREATE TABLE "routes" ("id" bigserial primary key, "name" character varying, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "color_name" character varying, "color" character varying, "tour_id" bigint)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "stops" CASCADE[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE TABLE "stops" ("id" bigserial primary key, "location_id" integer, "date" date, "timezone" character varying, "loc_id" character varying, "hurry_up_before" character varying, "sold_out_before" character varying, "max_boxes" integer, "sold_boxes" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "date_type" character varying, "repeat_until" date, "start_time" time, "end_time" time, "klaviyo_remider_1_id" character varying, "klaviyo_remider_2_id" character varying, "klaviyo_remider_3_id" character varying, "contact_name" character varying, "contact_phone" character varying, "contact_email" character varying, "notes" text, "status" integer DEFAULT 1, "target_boxes" integer)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_stops_on_date" ON "stops" ("date")[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "tours" CASCADE[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE TABLE "tours" ("id" bigserial primary key, "name" character varying, "friendly_name" character varying, "season" character varying, "start_date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "versions" CASCADE[0m
+  [1m[35m (0.8ms)[0m  [1m[35mCREATE TABLE "versions" ("id" bigserial primary key, "item_type" character varying NOT NULL, "item_id" bigint NOT NULL, "event" character varying NOT NULL, "whodunnit" character varying, "object" text, "created_at" timestamp, "object_changes" text)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_versions_on_item_type_and_item_id" ON "versions" ("item_type", "item_id")[0m
+  [1m[35m (0.8ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.5ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20210701053215)[0m
+  [1m[35m (0.9ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.9ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2021-07-12 18:32:11.402351"], ["updated_at", "2021-07-12 18:32:11.402351"]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Update (0.1ms)[0m  [1m[33mUPDATE "ar_internal_metadata" SET "value" = $1, "updated_at" = $2 WHERE "ar_internal_metadata"."key" = $3[0m  [["value", "test"], ["updated_at", "2021-07-12 18:32:11.405164"], ["key", "environment"]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.1ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "schema_sha1"], ["value", "b1fce4da12556eeb995c06fd77db36655d5860b5"], ["created_at", "2021-07-12 18:32:11.406947"], ["updated_at", "2021-07-12 18:32:11.406947"]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mStop Load (2.1ms)[0m  [1m[34mSELECT "stops".* FROM "stops" ORDER BY "stops"."id" ASC LIMIT $1[0m  [["LIMIT", 1]]
+  [1m[35m (44.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "orders"[0m
+  [1m[36mOrder Load (1.3ms)[0m  [1m[34mSELECT "orders".* FROM "orders" ORDER BY "orders"."id" ASC LIMIT $1[0m  [["LIMIT", 1]]
+  [1m[36mRoute Load (1.0ms)[0m  [1m[34mSELECT "routes".* FROM "routes" ORDER BY "routes"."id" ASC LIMIT $1[0m  [["LIMIT", 1]]
+  [1m[36mRoute Load (0.8ms)[0m  [1m[34mSELECT "routes".* FROM "routes" ORDER BY "routes"."id" ASC LIMIT $1[0m  [["LIMIT", 1]]
+  [1m[36mRoute Load (3.3ms)[0m  [1m[34mSELECT "routes".* FROM "routes" ORDER BY "routes"."id" ASC LIMIT $1[0m  [["LIMIT", 1]]
+  [1m[36mRoute Load (0.7ms)[0m  [1m[34mSELECT "routes".* FROM "routes" ORDER BY "routes"."id" ASC LIMIT $1[0m  [["LIMIT", 1]]
+  [1m[36mRoute Load (0.9ms)[0m  [1m[34mSELECT "routes".* FROM "routes" ORDER BY "routes"."id" ASC LIMIT $1[0m  [["LIMIT", 1]]
+  [1m[36mRouteDate Load (0.8ms)[0m  [1m[34mSELECT "route_dates".* FROM "route_dates" WHERE "route_dates"."route_id" = $1 /* loading for inspect */ LIMIT $2[0m  [["route_id", 1], ["LIMIT", 11]]
+  [1m[36mRoute Load (1.1ms)[0m  [1m[34mSELECT "routes".* FROM "routes" ORDER BY "routes"."id" ASC LIMIT $1[0m  [["LIMIT", 1]]
+  [1m[36mRouteDate Load (0.3ms)[0m  [1m[34mSELECT "route_dates".* FROM "route_dates" WHERE "route_dates"."route_id" = $1 ORDER BY "route_dates"."id" ASC LIMIT $2[0m  [["route_id", 1], ["LIMIT", 1]]
+  [1m[36mRoute Load (0.6ms)[0m  [1m[34mSELECT "routes".* FROM "routes" ORDER BY "routes"."id" ASC LIMIT $1[0m  [["LIMIT", 1]]
+  [1m[36mRouteDate Load (0.3ms)[0m  [1m[34mSELECT "route_dates".* FROM "route_dates" WHERE "route_dates"."route_id" = $1 ORDER BY "route_dates"."id" ASC LIMIT $2[0m  [["route_id", 1], ["LIMIT", 1]]
+  [1m[36mStop Load (2.9ms)[0m  [1m[34mSELECT "stops".* FROM "stops" INNER JOIN "route_date_stops" ON "stops"."id" = "route_date_stops"."stop_id" WHERE "route_date_stops"."route_date_id" = $1 /* loading for inspect */ LIMIT $2[0m  [["route_date_id", 1], ["LIMIT", 11]]
+  [1m[36mTour Load (1.3ms)[0m  [1m[34mSELECT "tours".* FROM "tours" ORDER BY "tours"."id" ASC LIMIT $1[0m  [["LIMIT", 1]]
+  [1m[36mRoute Load (0.3ms)[0m  [1m[34mSELECT "routes".* FROM "routes" WHERE "routes"."tour_id" = $1 ORDER BY "routes"."id" ASC LIMIT $2[0m  [["tour_id", 1], ["LIMIT", 1]]
+  [1m[36mRouteDate Load (0.2ms)[0m  [1m[34mSELECT "route_dates".* FROM "route_dates" WHERE "route_dates"."route_id" = $1 ORDER BY "route_dates"."id" ASC LIMIT $2[0m  [["route_id", 1], ["LIMIT", 1]]
+  [1m[36mStop Load (0.4ms)[0m  [1m[34mSELECT "stops".* FROM "stops" INNER JOIN "route_date_stops" ON "stops"."id" = "route_date_stops"."stop_id" WHERE "route_date_stops"."route_date_id" = $1 /* loading for inspect */ LIMIT $2[0m  [["route_date_id", 1], ["LIMIT", 11]]
+  [1m[35mSQL (64.6ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pg_stat_statements"[0m
+  [1m[35mSQL (17.8ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pgcrypto"[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35mSQL (16.6ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "tablefunc"[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "categories" CASCADE[0m
+  [1m[35m (25.2ms)[0m  [1m[35mCREATE TABLE "categories" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "locations" CASCADE[0m
+  [1m[35m (6.3ms)[0m  [1m[35mCREATE TABLE "locations" ("id" bigserial primary key, "campaign_id" integer, "name" character varying, "notes" text, "place_id" bigint, "address" character varying, "lat" decimal, "lng" decimal, "position" integer, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "market_id" integer, "available_here" text, "market_position" integer, "formatted_addresses" character varying[], "addresses" character varying[], "is_drive_thru" boolean, "static_map" character varying)[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_locations_on_addresses" ON "locations" ("addresses")[0m
+  [1m[35m (2.1ms)[0m  [1m[35mCREATE INDEX "index_locations_on_formatted_addresses" ON "locations" ("formatted_addresses")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "markets" CASCADE[0m
+  [1m[35m (6.1ms)[0m  [1m[35mCREATE TABLE "markets" ("id" bigserial primary key, "name" character varying, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "position" integer)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "order_line_items" CASCADE[0m
+  [1m[35m (6.1ms)[0m  [1m[35mCREATE TABLE "order_line_items" ("id" bigserial primary key, "order_id" integer, "product_id" bigint, "title" character varying, "quantity" integer, "price" decimal, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (2.4ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id_and_product_id" ON "order_line_items" ("order_id", "product_id")[0m
+  [1m[35m (2.3ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id" ON "order_line_items" ("order_id")[0m
+  [1m[35m (2.3ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_product_id" ON "order_line_items" ("product_id")[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "orders" CASCADE[0m
+  [1m[35m (7.1ms)[0m  [1m[35mCREATE TABLE "orders" ("id" bigserial primary key, "order_id" bigint, "order_number" integer, "customer_id" bigint, "stop_id" integer, "sh_created_at" timestamp, "sh_updated_at" timestamp, "total" decimal, "fulfillment_status" character varying, "scanned_date" timestamp, "cancelled_at" timestamp, "financial_status" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "location_id" integer, "sh_location_id" integer, "sh_stop_id" integer, "sh_location" character varying, "sh_address" character varying, "sh_coordinates" character varying, "sh_date_time" character varying, "order_type" character varying, "user_id" integer, "sh_fulfill" boolean DEFAULT FALSE, "is_mismatched" boolean DEFAULT FALSE, "canceled_order_id" integer, "migrated_order_id" integer, "scanned_coordinates" text, "scanned_from_location_id" integer, "template_version" character varying)[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_orders_on_location_id" ON "orders" ("location_id")[0m
+  [1m[35m (3.1ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_orders_on_order_id" ON "orders" ("order_id")[0m
+  [1m[35m (2.0ms)[0m  [1m[35mCREATE INDEX "index_orders_on_order_number" ON "orders" ("order_number")[0m
+  [1m[35m (2.3ms)[0m  [1m[35mCREATE INDEX "index_orders_on_stop_id" ON "orders" ("stop_id")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "products" CASCADE[0m
+  [1m[35m (6.3ms)[0m  [1m[35mCREATE TABLE "products" ("id" bigserial primary key, "product_id" bigint, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "qty" integer, "product_type" integer DEFAULT 0, "variant_id" bigint, "image_url" character varying, "price" decimal, "title" character varying)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "region_tours" CASCADE[0m
+  [1m[35m (4.1ms)[0m  [1m[35mCREATE TABLE "region_tours" ("id" bigserial primary key, "tour_id" integer, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "regions" CASCADE[0m
+  [1m[35m (6.3ms)[0m  [1m[35mCREATE TABLE "regions" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_date_stops" CASCADE[0m
+  [1m[35m (4.1ms)[0m  [1m[35mCREATE TABLE "route_date_stops" ("id" bigserial primary key, "route_date_id" integer, "stop_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_dates" CASCADE[0m
+  [1m[35m (5.9ms)[0m  [1m[35mCREATE TABLE "route_dates" ("id" bigserial primary key, "route_id" integer, "date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "status" integer, "stop_id" bigint)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "routes" CASCADE[0m
+  [1m[35m (5.6ms)[0m  [1m[35mCREATE TABLE "routes" ("id" bigserial primary key, "name" character varying, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "color_name" character varying, "color" character varying, "tour_id" bigint)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "stops" CASCADE[0m
+  [1m[35m (6.6ms)[0m  [1m[35mCREATE TABLE "stops" ("id" bigserial primary key, "location_id" integer, "date" date, "timezone" character varying, "loc_id" character varying, "hurry_up_before" character varying, "sold_out_before" character varying, "max_boxes" integer, "sold_boxes" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "date_type" character varying, "repeat_until" date, "start_time" time, "end_time" time, "klaviyo_remider_1_id" character varying, "klaviyo_remider_2_id" character varying, "klaviyo_remider_3_id" character varying, "contact_name" character varying, "contact_phone" character varying, "contact_email" character varying, "notes" text, "status" integer DEFAULT 1, "target_boxes" integer)[0m
+  [1m[35m (2.2ms)[0m  [1m[35mCREATE INDEX "index_stops_on_date" ON "stops" ("date")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "tours" CASCADE[0m
+  [1m[35m (6.5ms)[0m  [1m[35mCREATE TABLE "tours" ("id" bigserial primary key, "name" character varying, "friendly_name" character varying, "season" character varying, "start_date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "versions" CASCADE[0m
+  [1m[35m (6.4ms)[0m  [1m[35mCREATE TABLE "versions" ("id" bigserial primary key, "item_type" character varying NOT NULL, "item_id" bigint NOT NULL, "event" character varying NOT NULL, "whodunnit" character varying, "object" text, "created_at" timestamp, "object_changes" text)[0m
+  [1m[35m (2.8ms)[0m  [1m[35mCREATE INDEX "index_versions_on_item_type_and_item_id" ON "versions" ("item_type", "item_id")[0m
+  [1m[35m (5.4ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.7ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20210701053215)[0m
+  [1m[35m (5.0ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (1.0ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (1.3ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2021-07-17 18:45:46.545785"], ["updated_at", "2021-07-17 18:45:46.545785"]]
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::InternalMetadata Load (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.4ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "schema_sha1"], ["value", "b1fce4da12556eeb995c06fd77db36655d5860b5"], ["created_at", "2021-07-17 18:45:46.558733"], ["updated_at", "2021-07-17 18:45:46.558733"]]
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35mSQL (0.3ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pg_stat_statements"[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pgcrypto"[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "tablefunc"[0m
+  [1m[35m (7.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "categories" CASCADE[0m
+  [1m[35m (8.2ms)[0m  [1m[35mCREATE TABLE "categories" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (3.8ms)[0m  [1m[35mDROP TABLE IF EXISTS "locations" CASCADE[0m
+  [1m[35m (5.2ms)[0m  [1m[35mCREATE TABLE "locations" ("id" bigserial primary key, "campaign_id" integer, "name" character varying, "notes" text, "place_id" bigint, "address" character varying, "lat" decimal, "lng" decimal, "position" integer, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "market_id" integer, "available_here" text, "market_position" integer, "formatted_addresses" character varying[], "addresses" character varying[], "is_drive_thru" boolean, "static_map" character varying)[0m
+  [1m[35m (3.5ms)[0m  [1m[35mCREATE INDEX "index_locations_on_addresses" ON "locations" ("addresses")[0m
+  [1m[35m (2.6ms)[0m  [1m[35mCREATE INDEX "index_locations_on_formatted_addresses" ON "locations" ("formatted_addresses")[0m
+  [1m[35m (4.7ms)[0m  [1m[35mDROP TABLE IF EXISTS "markets" CASCADE[0m
+  [1m[35m (7.3ms)[0m  [1m[35mCREATE TABLE "markets" ("id" bigserial primary key, "name" character varying, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "position" integer)[0m
+  [1m[35m (6.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "order_line_items" CASCADE[0m
+  [1m[35m (8.2ms)[0m  [1m[35mCREATE TABLE "order_line_items" ("id" bigserial primary key, "order_id" integer, "product_id" bigint, "title" character varying, "quantity" integer, "price" decimal, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (3.0ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id_and_product_id" ON "order_line_items" ("order_id", "product_id")[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id" ON "order_line_items" ("order_id")[0m
+  [1m[35m (2.3ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_product_id" ON "order_line_items" ("product_id")[0m
+  [1m[35m (6.9ms)[0m  [1m[35mDROP TABLE IF EXISTS "orders" CASCADE[0m
+  [1m[35m (9.7ms)[0m  [1m[35mCREATE TABLE "orders" ("id" bigserial primary key, "order_id" bigint, "order_number" integer, "customer_id" bigint, "stop_id" integer, "sh_created_at" timestamp, "sh_updated_at" timestamp, "total" decimal, "fulfillment_status" character varying, "scanned_date" timestamp, "cancelled_at" timestamp, "financial_status" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "location_id" integer, "sh_location_id" integer, "sh_stop_id" integer, "sh_location" character varying, "sh_address" character varying, "sh_coordinates" character varying, "sh_date_time" character varying, "order_type" character varying, "user_id" integer, "sh_fulfill" boolean DEFAULT FALSE, "is_mismatched" boolean DEFAULT FALSE, "canceled_order_id" integer, "migrated_order_id" integer, "scanned_coordinates" text, "scanned_from_location_id" integer, "template_version" character varying)[0m
+  [1m[35m (2.9ms)[0m  [1m[35mCREATE INDEX "index_orders_on_location_id" ON "orders" ("location_id")[0m
+  [1m[35m (2.7ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_orders_on_order_id" ON "orders" ("order_id")[0m
+  [1m[35m (2.3ms)[0m  [1m[35mCREATE INDEX "index_orders_on_order_number" ON "orders" ("order_number")[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_orders_on_stop_id" ON "orders" ("stop_id")[0m
+  [1m[35m (4.8ms)[0m  [1m[35mDROP TABLE IF EXISTS "products" CASCADE[0m
+  [1m[35m (8.4ms)[0m  [1m[35mCREATE TABLE "products" ("id" bigserial primary key, "product_id" bigint, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "qty" integer, "product_type" integer DEFAULT 0, "variant_id" bigint, "image_url" character varying, "price" decimal, "title" character varying)[0m
+  [1m[35m (2.9ms)[0m  [1m[35mDROP TABLE IF EXISTS "region_tours" CASCADE[0m
+  [1m[35m (6.3ms)[0m  [1m[35mCREATE TABLE "region_tours" ("id" bigserial primary key, "tour_id" integer, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (4.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "regions" CASCADE[0m
+  [1m[35m (8.4ms)[0m  [1m[35mCREATE TABLE "regions" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (3.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_date_stops" CASCADE[0m
+  [1m[35m (5.2ms)[0m  [1m[35mCREATE TABLE "route_date_stops" ("id" bigserial primary key, "route_date_id" integer, "stop_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (5.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_dates" CASCADE[0m
+  [1m[35m (7.1ms)[0m  [1m[35mCREATE TABLE "route_dates" ("id" bigserial primary key, "route_id" integer, "date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "status" integer, "stop_id" bigint)[0m
+  [1m[35m (4.8ms)[0m  [1m[35mDROP TABLE IF EXISTS "routes" CASCADE[0m
+  [1m[35m (7.9ms)[0m  [1m[35mCREATE TABLE "routes" ("id" bigserial primary key, "name" character varying, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "color_name" character varying, "color" character varying, "tour_id" bigint)[0m
+  [1m[35m (5.9ms)[0m  [1m[35mDROP TABLE IF EXISTS "stops" CASCADE[0m
+  [1m[35m (8.1ms)[0m  [1m[35mCREATE TABLE "stops" ("id" bigserial primary key, "location_id" integer, "date" date, "timezone" character varying, "loc_id" character varying, "hurry_up_before" character varying, "sold_out_before" character varying, "max_boxes" integer, "sold_boxes" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "date_type" character varying, "repeat_until" date, "start_time" time, "end_time" time, "klaviyo_remider_1_id" character varying, "klaviyo_remider_2_id" character varying, "klaviyo_remider_3_id" character varying, "contact_name" character varying, "contact_phone" character varying, "contact_email" character varying, "notes" text, "status" integer DEFAULT 1, "target_boxes" integer)[0m
+  [1m[35m (2.8ms)[0m  [1m[35mCREATE INDEX "index_stops_on_date" ON "stops" ("date")[0m
+  [1m[35m (5.0ms)[0m  [1m[35mDROP TABLE IF EXISTS "tours" CASCADE[0m
+  [1m[35m (8.2ms)[0m  [1m[35mCREATE TABLE "tours" ("id" bigserial primary key, "name" character varying, "friendly_name" character varying, "season" character varying, "start_date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (4.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "versions" CASCADE[0m
+  [1m[35m (7.6ms)[0m  [1m[35mCREATE TABLE "versions" ("id" bigserial primary key, "item_type" character varying NOT NULL, "item_id" bigint NOT NULL, "event" character varying NOT NULL, "whodunnit" character varying, "object" text, "created_at" timestamp, "object_changes" text)[0m
+  [1m[35m (2.8ms)[0m  [1m[35mCREATE INDEX "index_versions_on_item_type_and_item_id" ON "versions" ("item_type", "item_id")[0m
+  [1m[35m (1.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Load (1.2ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::InternalMetadata Load (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::InternalMetadata Load (0.6ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[35mSQL (44.3ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pg_stat_statements"[0m
+  [1m[35mSQL (11.8ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pgcrypto"[0m
+  [1m[35mSQL (0.4ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35mSQL (9.1ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "tablefunc"[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "categories" CASCADE[0m
+  [1m[35m (21.0ms)[0m  [1m[35mCREATE TABLE "categories" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "locations" CASCADE[0m
+  [1m[35m (7.0ms)[0m  [1m[35mCREATE TABLE "locations" ("id" bigserial primary key, "campaign_id" integer, "name" character varying, "notes" text, "place_id" bigint, "address" character varying, "lat" decimal, "lng" decimal, "position" integer, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "market_id" integer, "available_here" text, "market_position" integer, "formatted_addresses" character varying[], "addresses" character varying[], "is_drive_thru" boolean, "static_map" character varying)[0m
+  [1m[35m (2.6ms)[0m  [1m[35mCREATE INDEX "index_locations_on_addresses" ON "locations" ("addresses")[0m
+  [1m[35m (2.2ms)[0m  [1m[35mCREATE INDEX "index_locations_on_formatted_addresses" ON "locations" ("formatted_addresses")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "markets" CASCADE[0m
+  [1m[35m (8.6ms)[0m  [1m[35mCREATE TABLE "markets" ("id" bigserial primary key, "name" character varying, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "position" integer)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "order_line_items" CASCADE[0m
+  [1m[35m (7.7ms)[0m  [1m[35mCREATE TABLE "order_line_items" ("id" bigserial primary key, "order_id" integer, "product_id" bigint, "title" character varying, "quantity" integer, "price" decimal, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (2.3ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id_and_product_id" ON "order_line_items" ("order_id", "product_id")[0m
+  [1m[35m (2.4ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id" ON "order_line_items" ("order_id")[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_product_id" ON "order_line_items" ("product_id")[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "orders" CASCADE[0m
+  [1m[35m (7.3ms)[0m  [1m[35mCREATE TABLE "orders" ("id" bigserial primary key, "order_id" bigint, "order_number" integer, "customer_id" bigint, "stop_id" integer, "sh_created_at" timestamp, "sh_updated_at" timestamp, "total" decimal, "fulfillment_status" character varying, "scanned_date" timestamp, "cancelled_at" timestamp, "financial_status" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "location_id" integer, "sh_location_id" integer, "sh_stop_id" integer, "sh_location" character varying, "sh_address" character varying, "sh_coordinates" character varying, "sh_date_time" character varying, "order_type" character varying, "user_id" integer, "sh_fulfill" boolean DEFAULT FALSE, "is_mismatched" boolean DEFAULT FALSE, "canceled_order_id" integer, "migrated_order_id" integer, "scanned_coordinates" text, "scanned_from_location_id" integer, "template_version" character varying)[0m
+  [1m[35m (2.7ms)[0m  [1m[35mCREATE INDEX "index_orders_on_location_id" ON "orders" ("location_id")[0m
+  [1m[35m (3.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_orders_on_order_id" ON "orders" ("order_id")[0m
+  [1m[35m (2.6ms)[0m  [1m[35mCREATE INDEX "index_orders_on_order_number" ON "orders" ("order_number")[0m
+  [1m[35m (2.3ms)[0m  [1m[35mCREATE INDEX "index_orders_on_stop_id" ON "orders" ("stop_id")[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "products" CASCADE[0m
+  [1m[35m (6.6ms)[0m  [1m[35mCREATE TABLE "products" ("id" bigserial primary key, "product_id" bigint, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "qty" integer, "product_type" integer DEFAULT 0, "variant_id" bigint, "image_url" character varying, "price" decimal, "title" character varying)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "region_tours" CASCADE[0m
+  [1m[35m (5.0ms)[0m  [1m[35mCREATE TABLE "region_tours" ("id" bigserial primary key, "tour_id" integer, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "regions" CASCADE[0m
+  [1m[35m (7.1ms)[0m  [1m[35mCREATE TABLE "regions" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (1.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_date_stops" CASCADE[0m
+  [1m[35m (4.8ms)[0m  [1m[35mCREATE TABLE "route_date_stops" ("id" bigserial primary key, "route_date_id" integer, "stop_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_dates" CASCADE[0m
+  [1m[35m (6.5ms)[0m  [1m[35mCREATE TABLE "route_dates" ("id" bigserial primary key, "route_id" integer, "date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "status" integer, "stop_id" bigint)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "routes" CASCADE[0m
+  [1m[35m (6.7ms)[0m  [1m[35mCREATE TABLE "routes" ("id" bigserial primary key, "name" character varying, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "color_name" character varying, "color" character varying, "tour_id" bigint)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "stops" CASCADE[0m
+  [1m[35m (7.7ms)[0m  [1m[35mCREATE TABLE "stops" ("id" bigserial primary key, "location_id" integer, "date" date, "timezone" character varying, "loc_id" character varying, "hurry_up_before" character varying, "sold_out_before" character varying, "max_boxes" integer, "sold_boxes" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "date_type" character varying, "repeat_until" date, "start_time" time, "end_time" time, "klaviyo_remider_1_id" character varying, "klaviyo_remider_2_id" character varying, "klaviyo_remider_3_id" character varying, "contact_name" character varying, "contact_phone" character varying, "contact_email" character varying, "notes" text, "status" integer DEFAULT 1, "target_boxes" integer)[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_stops_on_date" ON "stops" ("date")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "tours" CASCADE[0m
+  [1m[35m (6.7ms)[0m  [1m[35mCREATE TABLE "tours" ("id" bigserial primary key, "name" character varying, "friendly_name" character varying, "season" character varying, "start_date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "versions" CASCADE[0m
+  [1m[35m (7.1ms)[0m  [1m[35mCREATE TABLE "versions" ("id" bigserial primary key, "item_type" character varying NOT NULL, "item_id" bigint NOT NULL, "event" character varying NOT NULL, "whodunnit" character varying, "object" text, "created_at" timestamp, "object_changes" text)[0m
+  [1m[35m (3.0ms)[0m  [1m[35mCREATE INDEX "index_versions_on_item_type_and_item_id" ON "versions" ("item_type", "item_id")[0m
+  [1m[35m (5.3ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.9ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20210701053215)[0m
+  [1m[35m (5.2ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.9ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.7ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2021-07-17 18:46:35.186825"], ["updated_at", "2021-07-17 18:46:35.186825"]]
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.6ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Update (0.5ms)[0m  [1m[33mUPDATE "ar_internal_metadata" SET "value" = $1, "updated_at" = $2 WHERE "ar_internal_metadata"."key" = $3[0m  [["value", "test"], ["updated_at", "2021-07-17 18:46:35.194430"], ["key", "environment"]]
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.6ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "schema_sha1"], ["value", "b1fce4da12556eeb995c06fd77db36655d5860b5"], ["created_at", "2021-07-17 18:46:35.200389"], ["updated_at", "2021-07-17 18:46:35.200389"]]
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (2.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (1.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (5048.9ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck"[0m
+  [1m[35m (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.7ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (5024.8ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck"[0m
+  [1m[35m (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (5029.5ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck"[0m
+  [1m[35m (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.7ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (5023.4ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck"[0m
+  [1m[35m (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (5029.8ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck"[0m
+  [1m[35m (2.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (2.0ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (87.4ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck"[0m
+  [1m[35m (79.2ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck_test"[0m
+  [1m[35m (310.2ms)[0m  [1m[35mCREATE DATABASE "peach_truck" ENCODING = 'unicode'[0m
+  [1m[35m (226.2ms)[0m  [1m[35mCREATE DATABASE "peach_truck_test" ENCODING = 'unicode'[0m
+  [1m[35mSQL (36.6ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pg_stat_statements"[0m
+  [1m[35mSQL (29.5ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pgcrypto"[0m
+  [1m[35mSQL (0.4ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35mSQL (21.2ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "tablefunc"[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "categories" CASCADE[0m
+  [1m[35m (11.5ms)[0m  [1m[35mCREATE TABLE "categories" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.7ms)[0m  [1m[35mDROP TABLE IF EXISTS "locations" CASCADE[0m
+  [1m[35m (8.6ms)[0m  [1m[35mCREATE TABLE "locations" ("id" bigserial primary key, "campaign_id" integer, "name" character varying, "notes" text, "place_id" bigint, "address" character varying, "lat" decimal, "lng" decimal, "position" integer, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "market_id" integer, "available_here" text, "market_position" integer, "formatted_addresses" character varying[], "addresses" character varying[], "is_drive_thru" boolean, "static_map" character varying)[0m
+  [1m[35m (2.8ms)[0m  [1m[35mCREATE INDEX "index_locations_on_addresses" ON "locations" ("addresses")[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_locations_on_formatted_addresses" ON "locations" ("formatted_addresses")[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "markets" CASCADE[0m
+  [1m[35m (7.9ms)[0m  [1m[35mCREATE TABLE "markets" ("id" bigserial primary key, "name" character varying, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "position" integer)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "order_line_items" CASCADE[0m
+  [1m[35m (7.8ms)[0m  [1m[35mCREATE TABLE "order_line_items" ("id" bigserial primary key, "order_id" integer, "product_id" bigint, "title" character varying, "quantity" integer, "price" decimal, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (2.8ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id_and_product_id" ON "order_line_items" ("order_id", "product_id")[0m
+  [1m[35m (2.4ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id" ON "order_line_items" ("order_id")[0m
+  [1m[35m (2.4ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_product_id" ON "order_line_items" ("product_id")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "orders" CASCADE[0m
+  [1m[35m (9.2ms)[0m  [1m[35mCREATE TABLE "orders" ("id" bigserial primary key, "order_id" bigint, "order_number" integer, "customer_id" bigint, "stop_id" integer, "sh_created_at" timestamp, "sh_updated_at" timestamp, "total" decimal, "fulfillment_status" character varying, "scanned_date" timestamp, "cancelled_at" timestamp, "financial_status" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "location_id" integer, "sh_location_id" integer, "sh_stop_id" integer, "sh_location" character varying, "sh_address" character varying, "sh_coordinates" character varying, "sh_date_time" character varying, "order_type" character varying, "user_id" integer, "sh_fulfill" boolean DEFAULT FALSE, "is_mismatched" boolean DEFAULT FALSE, "canceled_order_id" integer, "migrated_order_id" integer, "scanned_coordinates" text, "scanned_from_location_id" integer, "template_version" character varying)[0m
+  [1m[35m (2.7ms)[0m  [1m[35mCREATE INDEX "index_orders_on_location_id" ON "orders" ("location_id")[0m
+  [1m[35m (2.9ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_orders_on_order_id" ON "orders" ("order_id")[0m
+  [1m[35m (2.6ms)[0m  [1m[35mCREATE INDEX "index_orders_on_order_number" ON "orders" ("order_number")[0m
+  [1m[35m (2.4ms)[0m  [1m[35mCREATE INDEX "index_orders_on_stop_id" ON "orders" ("stop_id")[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "products" CASCADE[0m
+  [1m[35m (7.9ms)[0m  [1m[35mCREATE TABLE "products" ("id" bigserial primary key, "product_id" bigint, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "qty" integer, "product_type" integer DEFAULT 0, "variant_id" bigint, "image_url" character varying, "price" decimal, "title" character varying)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "region_tours" CASCADE[0m
+  [1m[35m (5.4ms)[0m  [1m[35mCREATE TABLE "region_tours" ("id" bigserial primary key, "tour_id" integer, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "regions" CASCADE[0m
+  [1m[35m (7.6ms)[0m  [1m[35mCREATE TABLE "regions" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_date_stops" CASCADE[0m
+  [1m[35m (5.4ms)[0m  [1m[35mCREATE TABLE "route_date_stops" ("id" bigserial primary key, "route_date_id" integer, "stop_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_dates" CASCADE[0m
+  [1m[35m (8.5ms)[0m  [1m[35mCREATE TABLE "route_dates" ("id" bigserial primary key, "route_id" integer, "date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "status" integer, "stop_id" bigint)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "routes" CASCADE[0m
+  [1m[35m (7.7ms)[0m  [1m[35mCREATE TABLE "routes" ("id" bigserial primary key, "name" character varying, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "color_name" character varying, "color" character varying, "tour_id" bigint)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "stops" CASCADE[0m
+  [1m[35m (8.7ms)[0m  [1m[35mCREATE TABLE "stops" ("id" bigserial primary key, "location_id" integer, "date" date, "timezone" character varying, "loc_id" character varying, "hurry_up_before" character varying, "sold_out_before" character varying, "max_boxes" integer, "sold_boxes" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "date_type" character varying, "repeat_until" date, "start_time" time, "end_time" time, "klaviyo_remider_1_id" character varying, "klaviyo_remider_2_id" character varying, "klaviyo_remider_3_id" character varying, "contact_name" character varying, "contact_phone" character varying, "contact_email" character varying, "notes" text, "status" integer DEFAULT 1, "target_boxes" integer)[0m
+  [1m[35m (2.8ms)[0m  [1m[35mCREATE INDEX "index_stops_on_date" ON "stops" ("date")[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "tours" CASCADE[0m
+  [1m[35m (8.8ms)[0m  [1m[35mCREATE TABLE "tours" ("id" bigserial primary key, "name" character varying, "friendly_name" character varying, "season" character varying, "start_date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "versions" CASCADE[0m
+  [1m[35m (8.4ms)[0m  [1m[35mCREATE TABLE "versions" ("id" bigserial primary key, "item_type" character varying NOT NULL, "item_id" bigint NOT NULL, "event" character varying NOT NULL, "whodunnit" character varying, "object" text, "created_at" timestamp, "object_changes" text)[0m
+  [1m[35m (3.2ms)[0m  [1m[35mCREATE INDEX "index_versions_on_item_type_and_item_id" ON "versions" ("item_type", "item_id")[0m
+  [1m[35m (5.0ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (1.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (1.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20210701053215)[0m
+  [1m[35m (6.6ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (1.0ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.9ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2021-07-17 19:35:49.562892"], ["updated_at", "2021-07-17 19:35:49.562892"]]
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.8ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.6ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "schema_sha1"], ["value", "b1fce4da12556eeb995c06fd77db36655d5860b5"], ["created_at", "2021-07-17 19:35:49.576223"], ["updated_at", "2021-07-17 19:35:49.576223"]]
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35mSQL (21.5ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pg_stat_statements"[0m
+  [1m[35mSQL (11.9ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pgcrypto"[0m
+  [1m[35mSQL (0.4ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35mSQL (6.2ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "tablefunc"[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "categories" CASCADE[0m
+  [1m[35m (12.8ms)[0m  [1m[35mCREATE TABLE "categories" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "locations" CASCADE[0m
+  [1m[35m (9.5ms)[0m  [1m[35mCREATE TABLE "locations" ("id" bigserial primary key, "campaign_id" integer, "name" character varying, "notes" text, "place_id" bigint, "address" character varying, "lat" decimal, "lng" decimal, "position" integer, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "market_id" integer, "available_here" text, "market_position" integer, "formatted_addresses" character varying[], "addresses" character varying[], "is_drive_thru" boolean, "static_map" character varying)[0m
+  [1m[35m (2.8ms)[0m  [1m[35mCREATE INDEX "index_locations_on_addresses" ON "locations" ("addresses")[0m
+  [1m[35m (2.6ms)[0m  [1m[35mCREATE INDEX "index_locations_on_formatted_addresses" ON "locations" ("formatted_addresses")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "markets" CASCADE[0m
+  [1m[35m (7.7ms)[0m  [1m[35mCREATE TABLE "markets" ("id" bigserial primary key, "name" character varying, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "position" integer)[0m
+  [1m[35m (0.7ms)[0m  [1m[35mDROP TABLE IF EXISTS "order_line_items" CASCADE[0m
+  [1m[35m (8.6ms)[0m  [1m[35mCREATE TABLE "order_line_items" ("id" bigserial primary key, "order_id" integer, "product_id" bigint, "title" character varying, "quantity" integer, "price" decimal, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (3.0ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id_and_product_id" ON "order_line_items" ("order_id", "product_id")[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id" ON "order_line_items" ("order_id")[0m
+  [1m[35m (2.0ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_product_id" ON "order_line_items" ("product_id")[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "orders" CASCADE[0m
+  [1m[35m (7.6ms)[0m  [1m[35mCREATE TABLE "orders" ("id" bigserial primary key, "order_id" bigint, "order_number" integer, "customer_id" bigint, "stop_id" integer, "sh_created_at" timestamp, "sh_updated_at" timestamp, "total" decimal, "fulfillment_status" character varying, "scanned_date" timestamp, "cancelled_at" timestamp, "financial_status" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "location_id" integer, "sh_location_id" integer, "sh_stop_id" integer, "sh_location" character varying, "sh_address" character varying, "sh_coordinates" character varying, "sh_date_time" character varying, "order_type" character varying, "user_id" integer, "sh_fulfill" boolean DEFAULT FALSE, "is_mismatched" boolean DEFAULT FALSE, "canceled_order_id" integer, "migrated_order_id" integer, "scanned_coordinates" text, "scanned_from_location_id" integer, "template_version" character varying)[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_orders_on_location_id" ON "orders" ("location_id")[0m
+  [1m[35m (2.3ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_orders_on_order_id" ON "orders" ("order_id")[0m
+  [1m[35m (2.6ms)[0m  [1m[35mCREATE INDEX "index_orders_on_order_number" ON "orders" ("order_number")[0m
+  [1m[35m (2.6ms)[0m  [1m[35mCREATE INDEX "index_orders_on_stop_id" ON "orders" ("stop_id")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "products" CASCADE[0m
+  [1m[35m (6.9ms)[0m  [1m[35mCREATE TABLE "products" ("id" bigserial primary key, "product_id" bigint, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "qty" integer, "product_type" integer DEFAULT 0, "variant_id" bigint, "image_url" character varying, "price" decimal, "title" character varying)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "region_tours" CASCADE[0m
+  [1m[35m (4.5ms)[0m  [1m[35mCREATE TABLE "region_tours" ("id" bigserial primary key, "tour_id" integer, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "regions" CASCADE[0m
+  [1m[35m (7.6ms)[0m  [1m[35mCREATE TABLE "regions" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_date_stops" CASCADE[0m
+  [1m[35m (4.2ms)[0m  [1m[35mCREATE TABLE "route_date_stops" ("id" bigserial primary key, "route_date_id" integer, "stop_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_dates" CASCADE[0m
+  [1m[35m (6.9ms)[0m  [1m[35mCREATE TABLE "route_dates" ("id" bigserial primary key, "route_id" integer, "date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "status" integer, "stop_id" bigint)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "routes" CASCADE[0m
+  [1m[35m (7.2ms)[0m  [1m[35mCREATE TABLE "routes" ("id" bigserial primary key, "name" character varying, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "color_name" character varying, "color" character varying, "tour_id" bigint)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "stops" CASCADE[0m
+  [1m[35m (8.1ms)[0m  [1m[35mCREATE TABLE "stops" ("id" bigserial primary key, "location_id" integer, "date" date, "timezone" character varying, "loc_id" character varying, "hurry_up_before" character varying, "sold_out_before" character varying, "max_boxes" integer, "sold_boxes" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "date_type" character varying, "repeat_until" date, "start_time" time, "end_time" time, "klaviyo_remider_1_id" character varying, "klaviyo_remider_2_id" character varying, "klaviyo_remider_3_id" character varying, "contact_name" character varying, "contact_phone" character varying, "contact_email" character varying, "notes" text, "status" integer DEFAULT 1, "target_boxes" integer)[0m
+  [1m[35m (2.8ms)[0m  [1m[35mCREATE INDEX "index_stops_on_date" ON "stops" ("date")[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "tours" CASCADE[0m
+  [1m[35m (6.9ms)[0m  [1m[35mCREATE TABLE "tours" ("id" bigserial primary key, "name" character varying, "friendly_name" character varying, "season" character varying, "start_date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "versions" CASCADE[0m
+  [1m[35m (6.9ms)[0m  [1m[35mCREATE TABLE "versions" ("id" bigserial primary key, "item_type" character varying NOT NULL, "item_id" bigint NOT NULL, "event" character varying NOT NULL, "whodunnit" character varying, "object" text, "created_at" timestamp, "object_changes" text)[0m
+  [1m[35m (3.1ms)[0m  [1m[35mCREATE INDEX "index_versions_on_item_type_and_item_id" ON "versions" ("item_type", "item_id")[0m
+  [1m[35m (5.5ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (1.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20210701053215)[0m
+  [1m[35m (4.7ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.9ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.7ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2021-07-17 19:35:49.878840"], ["updated_at", "2021-07-17 19:35:49.878840"]]
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Update (0.6ms)[0m  [1m[33mUPDATE "ar_internal_metadata" SET "value" = $1, "updated_at" = $2 WHERE "ar_internal_metadata"."key" = $3[0m  [["value", "test"], ["updated_at", "2021-07-17 19:35:49.886649"], ["key", "environment"]]
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.4ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "schema_sha1"], ["value", "b1fce4da12556eeb995c06fd77db36655d5860b5"], ["created_at", "2021-07-17 19:35:49.893038"], ["updated_at", "2021-07-17 19:35:49.893038"]]
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (1.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.8ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (5053.0ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck"[0m
+  [1m[35m (2.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (1.5ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (5036.6ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck"[0m
+  [1m[35m (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (1.1ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (5020.3ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck"[0m
+  [1m[35m (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (84.5ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck"[0m
+  [1m[35m (82.9ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck_test"[0m
+  [1m[35m (342.1ms)[0m  [1m[35mCREATE DATABASE "peach_truck" ENCODING = 'unicode'[0m
+  [1m[35m (180.3ms)[0m  [1m[35mCREATE DATABASE "peach_truck_test" ENCODING = 'unicode'[0m
+  [1m[35mSQL (25.7ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pg_stat_statements"[0m
+  [1m[35mSQL (10.5ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pgcrypto"[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35mSQL (7.1ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "tablefunc"[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "categories" CASCADE[0m
+  [1m[35m (7.9ms)[0m  [1m[35mCREATE TABLE "categories" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "locations" CASCADE[0m
+  [1m[35m (5.9ms)[0m  [1m[35mCREATE TABLE "locations" ("id" bigserial primary key, "campaign_id" integer, "name" character varying, "notes" text, "place_id" bigint, "address" character varying, "lat" decimal, "lng" decimal, "position" integer, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "market_id" integer, "available_here" text, "market_position" integer, "formatted_addresses" character varying[], "addresses" character varying[], "is_drive_thru" boolean, "static_map" character varying)[0m
+  [1m[35m (1.8ms)[0m  [1m[35mCREATE INDEX "index_locations_on_addresses" ON "locations" ("addresses")[0m
+  [1m[35m (1.7ms)[0m  [1m[35mCREATE INDEX "index_locations_on_formatted_addresses" ON "locations" ("formatted_addresses")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "markets" CASCADE[0m
+  [1m[35m (5.0ms)[0m  [1m[35mCREATE TABLE "markets" ("id" bigserial primary key, "name" character varying, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "position" integer)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "order_line_items" CASCADE[0m
+  [1m[35m (5.3ms)[0m  [1m[35mCREATE TABLE "order_line_items" ("id" bigserial primary key, "order_id" integer, "product_id" bigint, "title" character varying, "quantity" integer, "price" decimal, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (2.1ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id_and_product_id" ON "order_line_items" ("order_id", "product_id")[0m
+  [1m[35m (1.8ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id" ON "order_line_items" ("order_id")[0m
+  [1m[35m (2.1ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_product_id" ON "order_line_items" ("product_id")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "orders" CASCADE[0m
+  [1m[35m (6.1ms)[0m  [1m[35mCREATE TABLE "orders" ("id" bigserial primary key, "order_id" bigint, "order_number" integer, "customer_id" bigint, "stop_id" integer, "sh_created_at" timestamp, "sh_updated_at" timestamp, "total" decimal, "fulfillment_status" character varying, "scanned_date" timestamp, "cancelled_at" timestamp, "financial_status" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "location_id" integer, "sh_location_id" integer, "sh_stop_id" integer, "sh_location" character varying, "sh_address" character varying, "sh_coordinates" character varying, "sh_date_time" character varying, "order_type" character varying, "user_id" integer, "sh_fulfill" boolean DEFAULT FALSE, "is_mismatched" boolean DEFAULT FALSE, "canceled_order_id" integer, "migrated_order_id" integer, "scanned_coordinates" text, "scanned_from_location_id" integer, "template_version" character varying)[0m
+  [1m[35m (1.8ms)[0m  [1m[35mCREATE INDEX "index_orders_on_location_id" ON "orders" ("location_id")[0m
+  [1m[35m (1.8ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_orders_on_order_id" ON "orders" ("order_id")[0m
+  [1m[35m (1.7ms)[0m  [1m[35mCREATE INDEX "index_orders_on_order_number" ON "orders" ("order_number")[0m
+  [1m[35m (1.7ms)[0m  [1m[35mCREATE INDEX "index_orders_on_stop_id" ON "orders" ("stop_id")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "products" CASCADE[0m
+  [1m[35m (5.3ms)[0m  [1m[35mCREATE TABLE "products" ("id" bigserial primary key, "product_id" bigint, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "qty" integer, "product_type" integer DEFAULT 0, "variant_id" bigint, "image_url" character varying, "price" decimal, "title" character varying)[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "region_tours" CASCADE[0m
+  [1m[35m (3.7ms)[0m  [1m[35mCREATE TABLE "region_tours" ("id" bigserial primary key, "tour_id" integer, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "regions" CASCADE[0m
+  [1m[35m (5.3ms)[0m  [1m[35mCREATE TABLE "regions" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_date_stops" CASCADE[0m
+  [1m[35m (3.6ms)[0m  [1m[35mCREATE TABLE "route_date_stops" ("id" bigserial primary key, "route_date_id" integer, "stop_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_dates" CASCADE[0m
+  [1m[35m (5.8ms)[0m  [1m[35mCREATE TABLE "route_dates" ("id" bigserial primary key, "route_id" integer, "date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "status" integer, "stop_id" bigint)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "routes" CASCADE[0m
+  [1m[35m (5.2ms)[0m  [1m[35mCREATE TABLE "routes" ("id" bigserial primary key, "name" character varying, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "color_name" character varying, "color" character varying, "tour_id" bigint)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "stops" CASCADE[0m
+  [1m[35m (6.0ms)[0m  [1m[35mCREATE TABLE "stops" ("id" bigserial primary key, "location_id" integer, "date" date, "timezone" character varying, "loc_id" character varying, "hurry_up_before" character varying, "sold_out_before" character varying, "max_boxes" integer, "sold_boxes" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "date_type" character varying, "repeat_until" date, "start_time" time, "end_time" time, "klaviyo_remider_1_id" character varying, "klaviyo_remider_2_id" character varying, "klaviyo_remider_3_id" character varying, "contact_name" character varying, "contact_phone" character varying, "contact_email" character varying, "notes" text, "status" integer DEFAULT 1, "target_boxes" integer)[0m
+  [1m[35m (1.9ms)[0m  [1m[35mCREATE INDEX "index_stops_on_date" ON "stops" ("date")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "tours" CASCADE[0m
+  [1m[35m (5.8ms)[0m  [1m[35mCREATE TABLE "tours" ("id" bigserial primary key, "name" character varying, "friendly_name" character varying, "season" character varying, "start_date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "versions" CASCADE[0m
+  [1m[35m (5.6ms)[0m  [1m[35mCREATE TABLE "versions" ("id" bigserial primary key, "item_type" character varying NOT NULL, "item_id" bigint NOT NULL, "event" character varying NOT NULL, "whodunnit" character varying, "object" text, "created_at" timestamp, "object_changes" text)[0m
+  [1m[35m (2.2ms)[0m  [1m[35mCREATE INDEX "index_versions_on_item_type_and_item_id" ON "versions" ("item_type", "item_id")[0m
+  [1m[35m (4.6ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.8ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20210701053215)[0m
+  [1m[35m (4.6ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.8ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.6ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2021-07-17 20:26:29.908919"], ["updated_at", "2021-07-17 20:26:29.908919"]]
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.4ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "schema_sha1"], ["value", "b1fce4da12556eeb995c06fd77db36655d5860b5"], ["created_at", "2021-07-17 20:26:29.919236"], ["updated_at", "2021-07-17 20:26:29.919236"]]
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35mSQL (15.4ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pg_stat_statements"[0m
+  [1m[35mSQL (12.3ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pgcrypto"[0m
+  [1m[35mSQL (0.4ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35mSQL (5.6ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "tablefunc"[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "categories" CASCADE[0m
+  [1m[35m (9.1ms)[0m  [1m[35mCREATE TABLE "categories" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "locations" CASCADE[0m
+  [1m[35m (6.4ms)[0m  [1m[35mCREATE TABLE "locations" ("id" bigserial primary key, "campaign_id" integer, "name" character varying, "notes" text, "place_id" bigint, "address" character varying, "lat" decimal, "lng" decimal, "position" integer, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "market_id" integer, "available_here" text, "market_position" integer, "formatted_addresses" character varying[], "addresses" character varying[], "is_drive_thru" boolean, "static_map" character varying)[0m
+  [1m[35m (2.3ms)[0m  [1m[35mCREATE INDEX "index_locations_on_addresses" ON "locations" ("addresses")[0m
+  [1m[35m (2.3ms)[0m  [1m[35mCREATE INDEX "index_locations_on_formatted_addresses" ON "locations" ("formatted_addresses")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "markets" CASCADE[0m
+  [1m[35m (7.5ms)[0m  [1m[35mCREATE TABLE "markets" ("id" bigserial primary key, "name" character varying, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "position" integer)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "order_line_items" CASCADE[0m
+  [1m[35m (7.9ms)[0m  [1m[35mCREATE TABLE "order_line_items" ("id" bigserial primary key, "order_id" integer, "product_id" bigint, "title" character varying, "quantity" integer, "price" decimal, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (2.7ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id_and_product_id" ON "order_line_items" ("order_id", "product_id")[0m
+  [1m[35m (2.4ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id" ON "order_line_items" ("order_id")[0m
+  [1m[35m (1.7ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_product_id" ON "order_line_items" ("product_id")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "orders" CASCADE[0m
+  [1m[35m (6.7ms)[0m  [1m[35mCREATE TABLE "orders" ("id" bigserial primary key, "order_id" bigint, "order_number" integer, "customer_id" bigint, "stop_id" integer, "sh_created_at" timestamp, "sh_updated_at" timestamp, "total" decimal, "fulfillment_status" character varying, "scanned_date" timestamp, "cancelled_at" timestamp, "financial_status" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "location_id" integer, "sh_location_id" integer, "sh_stop_id" integer, "sh_location" character varying, "sh_address" character varying, "sh_coordinates" character varying, "sh_date_time" character varying, "order_type" character varying, "user_id" integer, "sh_fulfill" boolean DEFAULT FALSE, "is_mismatched" boolean DEFAULT FALSE, "canceled_order_id" integer, "migrated_order_id" integer, "scanned_coordinates" text, "scanned_from_location_id" integer, "template_version" character varying)[0m
+  [1m[35m (2.1ms)[0m  [1m[35mCREATE INDEX "index_orders_on_location_id" ON "orders" ("location_id")[0m
+  [1m[35m (2.8ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_orders_on_order_id" ON "orders" ("order_id")[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_orders_on_order_number" ON "orders" ("order_number")[0m
+  [1m[35m (2.6ms)[0m  [1m[35mCREATE INDEX "index_orders_on_stop_id" ON "orders" ("stop_id")[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "products" CASCADE[0m
+  [1m[35m (10.0ms)[0m  [1m[35mCREATE TABLE "products" ("id" bigserial primary key, "product_id" bigint, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "qty" integer, "product_type" integer DEFAULT 0, "variant_id" bigint, "image_url" character varying, "price" decimal, "title" character varying)[0m
+  [1m[35m (0.7ms)[0m  [1m[35mDROP TABLE IF EXISTS "region_tours" CASCADE[0m
+  [1m[35m (9.6ms)[0m  [1m[35mCREATE TABLE "region_tours" ("id" bigserial primary key, "tour_id" integer, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "regions" CASCADE[0m
+  [1m[35m (5.5ms)[0m  [1m[35mCREATE TABLE "regions" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_date_stops" CASCADE[0m
+  [1m[35m (3.8ms)[0m  [1m[35mCREATE TABLE "route_date_stops" ("id" bigserial primary key, "route_date_id" integer, "stop_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (1.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_dates" CASCADE[0m
+  [1m[35m (8.4ms)[0m  [1m[35mCREATE TABLE "route_dates" ("id" bigserial primary key, "route_id" integer, "date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "status" integer, "stop_id" bigint)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "routes" CASCADE[0m
+  [1m[35m (7.4ms)[0m  [1m[35mCREATE TABLE "routes" ("id" bigserial primary key, "name" character varying, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "color_name" character varying, "color" character varying, "tour_id" bigint)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "stops" CASCADE[0m
+  [1m[35m (9.2ms)[0m  [1m[35mCREATE TABLE "stops" ("id" bigserial primary key, "location_id" integer, "date" date, "timezone" character varying, "loc_id" character varying, "hurry_up_before" character varying, "sold_out_before" character varying, "max_boxes" integer, "sold_boxes" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "date_type" character varying, "repeat_until" date, "start_time" time, "end_time" time, "klaviyo_remider_1_id" character varying, "klaviyo_remider_2_id" character varying, "klaviyo_remider_3_id" character varying, "contact_name" character varying, "contact_phone" character varying, "contact_email" character varying, "notes" text, "status" integer DEFAULT 1, "target_boxes" integer)[0m
+  [1m[35m (2.6ms)[0m  [1m[35mCREATE INDEX "index_stops_on_date" ON "stops" ("date")[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "tours" CASCADE[0m
+  [1m[35m (5.8ms)[0m  [1m[35mCREATE TABLE "tours" ("id" bigserial primary key, "name" character varying, "friendly_name" character varying, "season" character varying, "start_date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "versions" CASCADE[0m
+  [1m[35m (5.9ms)[0m  [1m[35mCREATE TABLE "versions" ("id" bigserial primary key, "item_type" character varying NOT NULL, "item_id" bigint NOT NULL, "event" character varying NOT NULL, "whodunnit" character varying, "object" text, "created_at" timestamp, "object_changes" text)[0m
+  [1m[35m (3.3ms)[0m  [1m[35mCREATE INDEX "index_versions_on_item_type_and_item_id" ON "versions" ("item_type", "item_id")[0m
+  [1m[35m (5.9ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (1.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (1.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20210701053215)[0m
+  [1m[35m (5.8ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.9ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.8ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2021-07-17 20:26:30.204303"], ["updated_at", "2021-07-17 20:26:30.204303"]]
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Update (0.5ms)[0m  [1m[33mUPDATE "ar_internal_metadata" SET "value" = $1, "updated_at" = $2 WHERE "ar_internal_metadata"."key" = $3[0m  [["value", "test"], ["updated_at", "2021-07-17 20:26:30.212086"], ["key", "environment"]]
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.4ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "schema_sha1"], ["value", "b1fce4da12556eeb995c06fd77db36655d5860b5"], ["created_at", "2021-07-17 20:26:30.218529"], ["updated_at", "2021-07-17 20:26:30.218529"]]
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (2.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT pg_try_advisory_lock(8594630356939838295)[0m
+  [1m[35m (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to LocationCategory (20210717194747)
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT pg_advisory_unlock(8594630356939838295)[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT pg_try_advisory_lock(8594630356939838295)[0m
+  [1m[35m (1.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to LocationCategories (20210717203236)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (6.7ms)[0m  [1m[35mCREATE TABLE "location_categories" ("id" bigserial primary key, "category_id" integer, "location_id" integer)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.5ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20210717203236"]]
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.8ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT pg_advisory_unlock(8594630356939838295)[0m
+  [1m[35m (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (2.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT pg_try_advisory_lock(8594630356939838295)[0m
+  [1m[35m (1.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to LocationCategories (20210717203236)
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (3.2ms)[0m  [1m[35mDROP TABLE "location_categories"[0m
+  [1m[36mActiveRecord::SchemaMigration Destroy (0.9ms)[0m  [1m[31mDELETE FROM "schema_migrations" WHERE "schema_migrations"."version" = $1[0m  [["version", "20210717203236"]]
+  [1m[36mTRANSACTION (2.9ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT pg_advisory_unlock(8594630356939838295)[0m
+  [1m[35m (1.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (5024.4ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck"[0m
+  [1m[35m (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "environment"]]
+  [1m[35m (83.3ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck"[0m
+  [1m[35m (84.3ms)[0m  [1m[35mDROP DATABASE IF EXISTS "peach_truck_test"[0m
+  [1m[35m (398.0ms)[0m  [1m[35mCREATE DATABASE "peach_truck" ENCODING = 'unicode'[0m
+  [1m[35m (206.5ms)[0m  [1m[35mCREATE DATABASE "peach_truck_test" ENCODING = 'unicode'[0m
+  [1m[35mSQL (34.3ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pg_stat_statements"[0m
+  [1m[35mSQL (11.5ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pgcrypto"[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35mSQL (8.2ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "tablefunc"[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "categories" CASCADE[0m
+  [1m[35m (13.2ms)[0m  [1m[35mCREATE TABLE "categories" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "locations" CASCADE[0m
+  [1m[35m (8.5ms)[0m  [1m[35mCREATE TABLE "locations" ("id" bigserial primary key, "campaign_id" integer, "name" character varying, "notes" text, "place_id" bigint, "address" character varying, "lat" decimal, "lng" decimal, "position" integer, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "market_id" integer, "available_here" text, "market_position" integer, "formatted_addresses" character varying[], "addresses" character varying[], "is_drive_thru" boolean, "static_map" character varying)[0m
+  [1m[35m (2.3ms)[0m  [1m[35mCREATE INDEX "index_locations_on_addresses" ON "locations" ("addresses")[0m
+  [1m[35m (2.1ms)[0m  [1m[35mCREATE INDEX "index_locations_on_formatted_addresses" ON "locations" ("formatted_addresses")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "markets" CASCADE[0m
+  [1m[35m (6.3ms)[0m  [1m[35mCREATE TABLE "markets" ("id" bigserial primary key, "name" character varying, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "position" integer)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "order_line_items" CASCADE[0m
+  [1m[35m (6.2ms)[0m  [1m[35mCREATE TABLE "order_line_items" ("id" bigserial primary key, "order_id" integer, "product_id" bigint, "title" character varying, "quantity" integer, "price" decimal, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (2.9ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id_and_product_id" ON "order_line_items" ("order_id", "product_id")[0m
+  [1m[35m (2.6ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id" ON "order_line_items" ("order_id")[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_product_id" ON "order_line_items" ("product_id")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "orders" CASCADE[0m
+  [1m[35m (9.8ms)[0m  [1m[35mCREATE TABLE "orders" ("id" bigserial primary key, "order_id" bigint, "order_number" integer, "customer_id" bigint, "stop_id" integer, "sh_created_at" timestamp, "sh_updated_at" timestamp, "total" decimal, "fulfillment_status" character varying, "scanned_date" timestamp, "cancelled_at" timestamp, "financial_status" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "location_id" integer, "sh_location_id" integer, "sh_stop_id" integer, "sh_location" character varying, "sh_address" character varying, "sh_coordinates" character varying, "sh_date_time" character varying, "order_type" character varying, "user_id" integer, "sh_fulfill" boolean DEFAULT FALSE, "is_mismatched" boolean DEFAULT FALSE, "canceled_order_id" integer, "migrated_order_id" integer, "scanned_coordinates" text, "scanned_from_location_id" integer, "template_version" character varying)[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_orders_on_location_id" ON "orders" ("location_id")[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_orders_on_order_id" ON "orders" ("order_id")[0m
+  [1m[35m (2.6ms)[0m  [1m[35mCREATE INDEX "index_orders_on_order_number" ON "orders" ("order_number")[0m
+  [1m[35m (2.2ms)[0m  [1m[35mCREATE INDEX "index_orders_on_stop_id" ON "orders" ("stop_id")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "products" CASCADE[0m
+  [1m[35m (6.3ms)[0m  [1m[35mCREATE TABLE "products" ("id" bigserial primary key, "product_id" bigint, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "qty" integer, "product_type" integer DEFAULT 0, "variant_id" bigint, "image_url" character varying, "price" decimal, "title" character varying)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "region_tours" CASCADE[0m
+  [1m[35m (4.4ms)[0m  [1m[35mCREATE TABLE "region_tours" ("id" bigserial primary key, "tour_id" integer, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.7ms)[0m  [1m[35mDROP TABLE IF EXISTS "regions" CASCADE[0m
+  [1m[35m (8.0ms)[0m  [1m[35mCREATE TABLE "regions" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_date_stops" CASCADE[0m
+  [1m[35m (5.5ms)[0m  [1m[35mCREATE TABLE "route_date_stops" ("id" bigserial primary key, "route_date_id" integer, "stop_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_dates" CASCADE[0m
+  [1m[35m (6.9ms)[0m  [1m[35mCREATE TABLE "route_dates" ("id" bigserial primary key, "route_id" integer, "date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "status" integer, "stop_id" bigint)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "routes" CASCADE[0m
+  [1m[35m (5.9ms)[0m  [1m[35mCREATE TABLE "routes" ("id" bigserial primary key, "name" character varying, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "color_name" character varying, "color" character varying, "tour_id" bigint)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "stops" CASCADE[0m
+  [1m[35m (6.2ms)[0m  [1m[35mCREATE TABLE "stops" ("id" bigserial primary key, "location_id" integer, "date" date, "timezone" character varying, "loc_id" character varying, "hurry_up_before" character varying, "sold_out_before" character varying, "max_boxes" integer, "sold_boxes" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "date_type" character varying, "repeat_until" date, "start_time" time, "end_time" time, "klaviyo_remider_1_id" character varying, "klaviyo_remider_2_id" character varying, "klaviyo_remider_3_id" character varying, "contact_name" character varying, "contact_phone" character varying, "contact_email" character varying, "notes" text, "status" integer DEFAULT 1, "target_boxes" integer)[0m
+  [1m[35m (2.0ms)[0m  [1m[35mCREATE INDEX "index_stops_on_date" ON "stops" ("date")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "tours" CASCADE[0m
+  [1m[35m (7.9ms)[0m  [1m[35mCREATE TABLE "tours" ("id" bigserial primary key, "name" character varying, "friendly_name" character varying, "season" character varying, "start_date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "versions" CASCADE[0m
+  [1m[35m (8.0ms)[0m  [1m[35mCREATE TABLE "versions" ("id" bigserial primary key, "item_type" character varying NOT NULL, "item_id" bigint NOT NULL, "event" character varying NOT NULL, "whodunnit" character varying, "object" text, "created_at" timestamp, "object_changes" text)[0m
+  [1m[35m (2.6ms)[0m  [1m[35mCREATE INDEX "index_versions_on_item_type_and_item_id" ON "versions" ("item_type", "item_id")[0m
+  [1m[35m (5.7ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (1.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (1.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20210701053215)[0m
+  [1m[35m (5.8ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (1.0ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.9ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2021-07-17 20:37:52.297092"], ["updated_at", "2021-07-17 20:37:52.297092"]]
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.6ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "schema_sha1"], ["value", "9953a8720206ce3f5462a6c8773f7fdb7ac7ee24"], ["created_at", "2021-07-17 20:37:52.310392"], ["updated_at", "2021-07-17 20:37:52.310392"]]
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35mSQL (21.9ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pg_stat_statements"[0m
+  [1m[35mSQL (12.8ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "pgcrypto"[0m
+  [1m[35mSQL (0.4ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35mSQL (5.8ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "tablefunc"[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "categories" CASCADE[0m
+  [1m[35m (11.4ms)[0m  [1m[35mCREATE TABLE "categories" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "locations" CASCADE[0m
+  [1m[35m (8.9ms)[0m  [1m[35mCREATE TABLE "locations" ("id" bigserial primary key, "campaign_id" integer, "name" character varying, "notes" text, "place_id" bigint, "address" character varying, "lat" decimal, "lng" decimal, "position" integer, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "market_id" integer, "available_here" text, "market_position" integer, "formatted_addresses" character varying[], "addresses" character varying[], "is_drive_thru" boolean, "static_map" character varying)[0m
+  [1m[35m (2.9ms)[0m  [1m[35mCREATE INDEX "index_locations_on_addresses" ON "locations" ("addresses")[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_locations_on_formatted_addresses" ON "locations" ("formatted_addresses")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "markets" CASCADE[0m
+  [1m[35m (7.9ms)[0m  [1m[35mCREATE TABLE "markets" ("id" bigserial primary key, "name" character varying, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "position" integer)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "order_line_items" CASCADE[0m
+  [1m[35m (7.6ms)[0m  [1m[35mCREATE TABLE "order_line_items" ("id" bigserial primary key, "order_id" integer, "product_id" bigint, "title" character varying, "quantity" integer, "price" decimal, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (2.7ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id_and_product_id" ON "order_line_items" ("order_id", "product_id")[0m
+  [1m[35m (2.4ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_order_id" ON "order_line_items" ("order_id")[0m
+  [1m[35m (2.1ms)[0m  [1m[35mCREATE INDEX "index_order_line_items_on_product_id" ON "order_line_items" ("product_id")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "orders" CASCADE[0m
+  [1m[35m (9.5ms)[0m  [1m[35mCREATE TABLE "orders" ("id" bigserial primary key, "order_id" bigint, "order_number" integer, "customer_id" bigint, "stop_id" integer, "sh_created_at" timestamp, "sh_updated_at" timestamp, "total" decimal, "fulfillment_status" character varying, "scanned_date" timestamp, "cancelled_at" timestamp, "financial_status" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "location_id" integer, "sh_location_id" integer, "sh_stop_id" integer, "sh_location" character varying, "sh_address" character varying, "sh_coordinates" character varying, "sh_date_time" character varying, "order_type" character varying, "user_id" integer, "sh_fulfill" boolean DEFAULT FALSE, "is_mismatched" boolean DEFAULT FALSE, "canceled_order_id" integer, "migrated_order_id" integer, "scanned_coordinates" text, "scanned_from_location_id" integer, "template_version" character varying)[0m
+  [1m[35m (2.8ms)[0m  [1m[35mCREATE INDEX "index_orders_on_location_id" ON "orders" ("location_id")[0m
+  [1m[35m (2.8ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_orders_on_order_id" ON "orders" ("order_id")[0m
+  [1m[35m (2.7ms)[0m  [1m[35mCREATE INDEX "index_orders_on_order_number" ON "orders" ("order_number")[0m
+  [1m[35m (2.4ms)[0m  [1m[35mCREATE INDEX "index_orders_on_stop_id" ON "orders" ("stop_id")[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "products" CASCADE[0m
+  [1m[35m (7.5ms)[0m  [1m[35mCREATE TABLE "products" ("id" bigserial primary key, "product_id" bigint, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "qty" integer, "product_type" integer DEFAULT 0, "variant_id" bigint, "image_url" character varying, "price" decimal, "title" character varying)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "region_tours" CASCADE[0m
+  [1m[35m (4.5ms)[0m  [1m[35mCREATE TABLE "region_tours" ("id" bigserial primary key, "tour_id" integer, "region_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "regions" CASCADE[0m
+  [1m[35m (6.5ms)[0m  [1m[35mCREATE TABLE "regions" ("id" bigserial primary key, "name" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_date_stops" CASCADE[0m
+  [1m[35m (5.4ms)[0m  [1m[35mCREATE TABLE "route_date_stops" ("id" bigserial primary key, "route_date_id" integer, "stop_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "route_dates" CASCADE[0m
+  [1m[35m (8.7ms)[0m  [1m[35mCREATE TABLE "route_dates" ("id" bigserial primary key, "route_id" integer, "date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "status" integer, "stop_id" bigint)[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE IF EXISTS "routes" CASCADE[0m
+  [1m[35m (7.7ms)[0m  [1m[35mCREATE TABLE "routes" ("id" bigserial primary key, "name" character varying, "is_active" boolean, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "color_name" character varying, "color" character varying, "tour_id" bigint)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "stops" CASCADE[0m
+  [1m[35m (7.2ms)[0m  [1m[35mCREATE TABLE "stops" ("id" bigserial primary key, "location_id" integer, "date" date, "timezone" character varying, "loc_id" character varying, "hurry_up_before" character varying, "sold_out_before" character varying, "max_boxes" integer, "sold_boxes" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "date_type" character varying, "repeat_until" date, "start_time" time, "end_time" time, "klaviyo_remider_1_id" character varying, "klaviyo_remider_2_id" character varying, "klaviyo_remider_3_id" character varying, "contact_name" character varying, "contact_phone" character varying, "contact_email" character varying, "notes" text, "status" integer DEFAULT 1, "target_boxes" integer)[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_stops_on_date" ON "stops" ("date")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "tours" CASCADE[0m
+  [1m[35m (6.5ms)[0m  [1m[35mCREATE TABLE "tours" ("id" bigserial primary key, "name" character varying, "friendly_name" character varying, "season" character varying, "start_date" date, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "versions" CASCADE[0m
+  [1m[35m (7.0ms)[0m  [1m[35mCREATE TABLE "versions" ("id" bigserial primary key, "item_type" character varying NOT NULL, "item_id" bigint NOT NULL, "event" character varying NOT NULL, "whodunnit" character varying, "object" text, "created_at" timestamp, "object_changes" text)[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_versions_on_item_type_and_item_id" ON "versions" ("item_type", "item_id")[0m
+  [1m[35m (5.0ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.9ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20210701053215)[0m
+  [1m[35m (4.9ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.7ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.5ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2021-07-17 20:37:52.604373"], ["updated_at", "2021-07-17 20:37:52.604373"]]
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Update (0.4ms)[0m  [1m[33mUPDATE "ar_internal_metadata" SET "value" = $1, "updated_at" = $2 WHERE "ar_internal_metadata"."key" = $3[0m  [["value", "test"], ["updated_at", "2021-07-17 20:37:52.610847"], ["key", "environment"]]
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.5ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "schema_sha1"], ["value", "9953a8720206ce3f5462a6c8773f7fdb7ac7ee24"], ["created_at", "2021-07-17 20:37:52.616733"], ["updated_at", "2021-07-17 20:37:52.616733"]]
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (1.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT pg_try_advisory_lock(8594630356939838295)[0m
+  [1m[35m (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to LocationCategories (20210717203236)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (5.7ms)[0m  [1m[35mCREATE TABLE "location_categories" ("id" bigserial primary key, "category_id" integer, "location_id" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.5ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20210717203236"]]
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.6ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT pg_advisory_unlock(8594630356939838295)[0m
+  [1m[35m (1.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Started GET "/" for ::1 at 2021-07-17 15:54:58 -0500
+  [1m[35m (3.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by Rails::WelcomeController#index as HTML
+  Rendering /Users/esteban/.rvm/gems/ruby-2.7.2/gems/railties-6.1.4/lib/rails/templates/rails/welcome/index.html.erb
+  Rendered /Users/esteban/.rvm/gems/ruby-2.7.2/gems/railties-6.1.4/lib/rails/templates/rails/welcome/index.html.erb (Duration: 10.4ms | Allocations: 443)
+Completed 200 OK in 51ms (Views: 24.0ms | ActiveRecord: 0.0ms | Allocations: 3599)
+
+
+Started GET "/" for ::1 at 2021-07-17 15:54:58 -0500
+Processing by Rails::WelcomeController#index as HTML
+  Rendering /Users/esteban/.rvm/gems/ruby-2.7.2/gems/railties-6.1.4/lib/rails/templates/rails/welcome/index.html.erb
+  Rendered /Users/esteban/.rvm/gems/ruby-2.7.2/gems/railties-6.1.4/lib/rails/templates/rails/welcome/index.html.erb (Duration: 8.1ms | Allocations: 215)
+Completed 200 OK in 17ms (Views: 9.6ms | ActiveRecord: 0.0ms | Allocations: 828)
+
+
