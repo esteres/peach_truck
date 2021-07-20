@@ -1,0 +1,6 @@
+tpt-example/node_modules/
+tpt-example/tmp/
+tpt-example/log
+.DS_store
+.env
+.sass-cache
